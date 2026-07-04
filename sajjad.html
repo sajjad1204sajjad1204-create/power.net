@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#000000">
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('service-worker.js').then(function(registration) {
+        console.log('ServiceWorker registered!');
+      }, function(err) {
+        console.log('ServiceWorker registration failed: ', err);
+      });
+    });
+  }
+</script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>فروش برق و انرژی</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;800&display=swap');
+
+    :root{
+      --bg1:#050816;
+      --bg2:#0b1730;
+      --card: rgba(15, 23, 42, 0.72);
+      --card2: rgba(10, 16, 35, 0.75);
+      --line: rgba(255,255,255,0.08);
+      --text:#eef4ff;
+      --muted:#aac0e6;
+      --primary:#55d6ff;
+      --primary2:#4f8cff;
+      --good:#3ef0a8;
+      --warn:#ffcb6b;
+      --bad:#ff6b8b;
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
+      --radius: 24px;
+    }
+
+    *{ box-sizing:border-box; }
+    html{ scroll-behavior:smooth; }
+    body{
+      margin:0;
+      font-family:'Vazirmatn', sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 10% 10%, rgba(85,214,255,0.15), transparent 28%),
+        radial-gradient(circle at 90% 20%, rgba(79,140,255,0.13), transparent 24%),
+        radial-gradient(circle at 50% 80%, rgba(62,240,168,0.10), transparent 25%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      min-height:100vh;
+      overflow-x:hidden;
+      position:relative;
+    }
+
+    body::before{
+      content:'';
+      position:fixed;
+      inset:-30%;
+      background:
+        linear-gradient(120deg, transparent 0 40%, rgba(85,214,255,0.10) 45%, transparent 50% 100%),
+        linear-gradient(300deg, transparent 0 40%, rgba(79,140,255,0.08) 46%, transparent 52% 100%);
+      filter: blur(8px);
+      animation: flow 10s linear infinite;
+      pointer-events:none;
+      z-index:0;
+    }
+
+    @keyframes flow{
+      0%{ transform:translateX(-5%) translateY(0) rotate(0deg); }
+      50%{ transform:translateX(5%) translateY(-2%) rotate(2deg); }
+      100%{ transform:translateX(-5%) translateY(0) rotate(0deg); }
+    }
+
+    .container{
+      width:min(1200px, 92%);
+      margin:auto;
+      position:relative;
+      z-index:1;
+    }
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:20;
+      backdrop-filter: blur(16px);
+      background: rgba(5, 8, 22, 0.72);
+      border-bottom:1px solid var(--line);
+    }
+
+    .nav{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      padding:16px 0;
+      flex-wrap:wrap;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-size:1.15rem;
+      font-weight:800;
+      letter-spacing:-0.3px;
+    }
+
+    .logo{
+      width:46px;
+      height:46px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      background: linear-gradient(135deg, rgba(85,214,255,.95), rgba(79,140,255,.92));
+      color:#fff;
+      box-shadow: 0 12px 30px rgba(85,214,255,.22);
+    }
+
+    nav a{
+      color:var(--muted);
+      text-decoration:none;
+      margin-inline:10px;
+      font-weight:500;
+    }
+
+    nav a:hover{ color:#fff; }
+
+    .hero{
+      padding:70px 0 32px;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:28px;
+      align-items:center;
+    }
+
+    .hero h1{
+      font-size:clamp(2rem, 4vw, 4rem);
+      margin:0 0 16px;
+      line-height:1.15;
+    }
+
+    .hero p{
+      margin:0 0 24px;
+      color:var(--muted);
+      font-size:1.05rem;
+      line-height:1.9;
+    }
+
+    .hero-card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:24px;
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .stat{
+      background: rgba(255,255,255,.05);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      text-align:center;
+    }
+
+    .stat strong{
+      display:block;
+      font-size:1.2rem;
+      color:#fff;
+    }
+
+    .stat span{
+      color:var(--muted);
+      font-size:.9rem;
+    }
+
+    .buttons{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:20px;
+    }
+
+    .btn{
+      border:none;
+      cursor:pointer;
+      padding:13px 20px;
+      border-radius:16px;
+      font-family:inherit;
+      font-weight:700;
+      color:#fff;
+      transition:.25s ease;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+
+    .btn-primary{
+      background: linear-gradient(135deg, var(--primary), var(--primary2));
+      box-shadow: 0 14px 30px rgba(79,140,255,.22);
+    }
+
+    .btn-secondary{
+      background: rgba(255,255,255,.08);
+      border:1px solid var(--line);
+    }
+
+    .btn:hover{ transform:translateY(-2px); }
+
+    section{
+      padding:32px 0;
+    }
+
+    .section-title{
+      font-size:1.8rem;
+      margin:0 0 18px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      gap:20px;
+    }
+
+    .card{
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .product-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .badge{
+      padding:7px 12px;
+      border-radius:999px;
+      font-size:.85rem;
+      font-weight:700;
+      background: rgba(85,214,255,.12);
+      color:#aee9ff;
+      border:1px solid rgba(85,214,255,.18);
+    }
+
+    .badge.bad{
+      background: rgba(255,107,139,.12);
+      color:#ffb5c4;
+      border-color: rgba(255,107,139,.18);
+    }
+
+    .price{
+      font-size:1.4rem;
+      font-weight:800;
+      color:#fff;
+      margin:8px 0 10px;
+    }
+
+    .list{
+      margin:14px 0 18px;
+      padding:0 18px 0 0;
+      color:var(--muted);
+      line-height:1.9;
+    }
+
+    .list li{ margin-bottom:8px; }
+
+    .product-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+
+    .cart-box{
+      display:grid;
+      grid-template-columns: 1fr .9fr;
+      gap:20px;
+      align-items:start;
+    }
+
+    .cart-items{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .cart-item{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding:14px 16px;
+      border-radius:18px;
+      background: rgba(255,255,255,.05);
+      border:1px solid var(--line);
+    }
+
+    .cart-item small{ color:var(--muted); }
+
+    .summary{
+      background: var(--card2);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:22px;
+      position:sticky;
+      top:95px;
+    }
+
+    .summary h3{ margin-top:0; }
+
+    .summary-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin:12px 0;
+      color:var(--muted);
+    }
+
+    .summary-row strong{ color:#fff; }
+
+    .total{
+      font-size:1.25rem;
+      padding-top:12px;
+      border-top:1px solid var(--line);
+      margin-top:16px;
+    }
+
+    .payment-form{
+      display:grid;
+      gap:12px;
+      margin-top:16px;
+    }
+
+    .input{
+      width:100%;
+      padding:14px 16px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color:#fff;
+      font-family:inherit;
+      outline:none;
+    }
+
+    .input::placeholder{ color:#a8b9da; }
+
+    .input:focus{
+      border-color: rgba(85,214,255,.45);
+      box-shadow:0 0 0 4px rgba(85,214,255,.08);
+    }
+
+    footer{
+      padding:24px 0 40px;
+      color:var(--muted);
+      text-align:center;
+      border-top:1px solid var(--line);
+      margin-top:26px;
+    }
+
+    .note{
+      color: #b9c9ea;
+      font-size:.92rem;
+      line-height:1.8;
+    }
+
+    @media (max-width: 900px){
+      .hero,
+      .grid,
+      .cart-box{
+        grid-template-columns:1fr;
+      }
+      .summary{
+        position:static;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <div class="logo">⚡</div>
+        <div>
+          <div>فروشگاه برق و انرژی</div>
+          <small style="color:var(--muted);font-weight:500;">خرید هوشمند انرژی</small>
+        </div>
+      </div>
+      <nav>
+        <a href="#products">محصولات</a>
+        <a href="#cart">سبد خرید</a>
+        <a href="#payment">پرداخت</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div>
+        <h1>خرید برق با قیمت شفاف، سبد خرید ساده و پرداخت سریع</h1>
+        <p>
+          در این نسخه، برای هر نوع برق قیمت هر کیلووات نمایش داده می‌شود،
+          می‌توانی آن را به سبد خرید اضافه کنی و سپس فرم پرداخت شبیه‌سازی‌شده را تکمیل کنی.
+        </p>
+        <div class="buttons">
+          <a class="btn btn-primary" href="#products">مشاهده محصولات</a>
+          <a class="btn btn-secondary" href="#payment">رفتن به پرداخت</a>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><strong>۲</strong><span>نوع انرژی</span></div>
+          <div class="stat"><strong>قیمت شفاف</strong><span>به ازای هر کیلووات</span></div>
+          <div class="stat"><strong>پرداخت آنلاین</strong><span>فرم شبیه‌سازی</span></div>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <h3 style="margin-top:0;">راهنمای خرید</h3>
+        <p class="note">
+          1) محصول را انتخاب کن.<br>
+          2) روی «افزودن به سبد» بزن.<br>
+          3) تعداد کیلووات را در سبد بررسی کن.<br>
+          4) فرم اطلاعات کارت را برای شبیه‌سازی پرداخت پر کن.
+        </p>
+      </div>
+    </section>
+
+    <section id="products">
+      <h2 class="section-title">محصولات</h2>
+      <div class="grid">
+        <article class="card">
+          <div class="product-head">
+            <h3 style="margin:0;">برق تجدیدپذیر ☀️</h3>
+            <span class="badge">سبز و پایدار</span>
+          </div>
+          <div class="price">هر کیلووات: ۱,۸۰۰ تومان</div>
+          <p class="note">منبعی پاک‌تر برای استفاده روزانه و مناسب مصرف‌کنندگان دوستدار محیط‌زیست.</p>
+          <ul class="list">
+            <li>فواید: کاهش آلودگی، دوستدار محیط‌زیست، پایداری بلندمدت</li>
+            <li>ضررها: وابستگی به شرایط آب‌وهوا، هزینه اولیه بالاتر</li>
+          </ul>
+          <div class="product-actions">
+            <button class="btn btn-primary" onclick="addToCart('برق تجدیدپذیر', 1800)">افزودن به سبد</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="product-head">
+            <h3 style="margin:0;">برق تجدیدناپذیر ⚡</h3>
+            <span class="badge bad">قدرت بالا</span>
+          </div>
+          <div class="price">هر کیلووات: ۱,۲۰۰ تومان</div>
+          <p class="note">انتخابی متداول با دسترسی گسترده، مناسب مصرف فوری و مداوم.</p>
+          <ul class="list">
+            <li>فواید: تولید سریع، دسترسی بیشتر، هزینه اولیه کمتر</li>
+            <li>ضررها: آلودگی بیشتر، منابع محدود، اثرات زیست‌محیطی</li>
+          </ul>
+          <div class="product-actions">
+            <button class="btn btn-primary" onclick="addToCart('برق تجدیدناپذیر', 1200)">افزودن به سبد</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="cart">
+      <h2 class="section-title">سبد خرید</h2>
+      <div class="cart-box">
+        <div class="card">
+          <h3 style="margin-top:0;">آیتم‌های انتخاب‌شده</h3>
+          <div id="cartItems" class="cart-items">
+            <div class="cart-item">
+              <div>
+                <strong>هنوز محصولی اضافه نشده است</strong><br>
+                <small>برای شروع خرید، یک محصول را به سبد اضافه کن.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="summary">
+          <h3>خلاصه سفارش</h3>
+          <div class="summary-row"><span>تعداد آیتم</span><strong id="cartCount">0</strong></div>
+          <div class="summary-row"><span>جمع کل</span><strong id="cartTotal">0 تومان</strong></div>
+          <div class="summary-row total"><span>مبلغ نهایی</span><strong id="finalTotal">0 تومان</strong></div>
+          <p class="note" style="margin-top:12px;">
+            این بخش برای جمع‌آوری اطلاعات سفارش و نمایش مبلغ کل استفاده می‌شود.
+          </p>
+        </aside>
+      </div>
+    </section>
+
+    <section id="payment">
+      <h2 class="section-title">فرم پرداخت</h2>
+      <div class="card">
+        <p class="note">
+          این فرم فقط برای شبیه‌سازی پرداخت است. در پروژه واقعی باید از درگاه پرداخت امن استفاده شود.
+        </p>
+
+        <form class="payment-form" onsubmit="event.preventDefault(); alert('پرداخت شما به‌صورت آزمایشی ثبت شد.');">
+          <input class="input" type="text" placeholder="نام و نام خانوادگی" required>
+          <input class="input" type="text" placeholder="شماره کارت بانکی" inputmode="numeric" maxlength="16" required>
+          <input class="input" type="text" placeholder="رمز دوم / CVV2" inputmode="numeric" required>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <input class="input" type="text" placeholder="ماه انقضا" required>
+            <input class="input" type="text" placeholder="سال انقضا" required>
+          </div>
+          <input class="input" type="text" placeholder="شماره موبایل" required>
+          <button class="btn btn-primary" type="submit">ثبت و پرداخت</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    تمامی حقوق مادی و معنوی این وب‌سایت محفوظ است © ۲۰۲۶
+  </footer>
+
+  <script>
+    const cart = [];
+    const cartItemsEl = document.getElementById('cartItems');
+    const cartCountEl = document.getElementById('cartCount');
+    const cartTotalEl = document.getElementById('cartTotal');
+    const finalTotalEl = document.getElementById('finalTotal');
+
+    function formatToman(n){
+      return n.toLocaleString('fa-IR') + ' تومان';
+    }
+
+    function renderCart(){
+      cartItemsEl.innerHTML = '';
+      if(cart.length === 0){
+        cartItemsEl.innerHTML = `
+          <div class="cart-item">
+            <div>
+              <strong>هنوز محصولی اضافه نشده است</strong><br>
+              <small>برای شروع خرید، یک محصول را به سبد اضافه کن.</small>
+            </div>
+          </div>`;
+      } else {
+        cart.forEach((item, index) => {
+          const el = document.createElement('div');
+          el.className = 'cart-item';
+          el.innerHTML = `
+            <div>
+              <strong>${item.name}</strong><br>
+              <small>قیمت هر کیلووات: ${formatToman(item.price)}</small>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span><strong>${item.qty}</strong> کیلووات</span>
+              <button class="btn btn-secondary" style="padding:8px 12px;border-radius:12px;" onclick="removeFromCart(${index})">حذف</button>
+            </div>
+          `;
+          cartItemsEl.appendChild(el);
+        });
+      }
+
+      const count = cart.reduce((sum, item) => sum + item.qty, 0);
+      const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+      cartCountEl.textContent = count.toLocaleString('fa-IR');
+      cartTotalEl.textContent = formatToman(total);
+      finalTotalEl.textContent = formatToman(total);
+    }
+
+    function addToCart(name, price){
+      const existing = cart.find(item => item.name === name);
+      if(existing){
+        existing.qty += 1;
+      } else {
+        cart.push({ name, price, qty: 1 });
+      }
+      renderCart();
+      location.hash = '#cart';
+    }
+
+    function removeFromCart(index){
+      cart.splice(index, 1);
+      renderCart();
+    }
+
+    renderCart();
+  </script>
+
+</body>
+</html>
